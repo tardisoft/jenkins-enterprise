@@ -123,7 +123,7 @@ abstract class AbstractJenkinsPipeline implements Serializable {
             return
         }
         if(script?.env) {
-            env.putAll(script?.env as Map)
+            (env ?: [:]).putAll(script.env as Map)
         }
         script.timestamps {
             node(script, nodeLabel) {
