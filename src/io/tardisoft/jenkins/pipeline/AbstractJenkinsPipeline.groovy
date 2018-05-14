@@ -141,44 +141,42 @@ abstract class AbstractJenkinsPipeline implements Serializable {
     void pipeline(def script) {
         def closure = {
 
-            script.tools {
-                maven 'Maven 3.3.9'
-            }
-
             stage(script, 'Checkout') {
                 checkout(script)
             }
 
             try {
-                try {
-                    stage(script, 'Build and Test') {
-                        buildAndTest(script)
-                    }
-                } catch (Exception e) {
-                    script.echo "Error building ${e.getMessage()}"
-                    script.echo e.stackTrace
-                } finally {
-                    if (script.currentBuild.result != 'ABORTED') {
-                        stage(script, 'Publish Build Results') {
-                            publish(script)
+                script.withMaven {
+                    try {
+                        stage(script, 'Build and Test') {
+                            buildAndTest(script)
+                        }
+                    } catch (Exception e) {
+                        script.echo "Error building ${e.getMessage()}"
+                        script.echo e.stackTrace
+                    } finally {
+                        if (script.currentBuild.result != 'ABORTED') {
+                            stage(script, 'Publish Build Results') {
+                                publish(script)
+                            }
                         }
                     }
-                }
 
-                stage(script, 'Quality Gate') {
-                    qualityGate(script)
-                }
+                    stage(script, 'Quality Gate') {
+                        qualityGate(script)
+                    }
 
-                stage(script, 'Tag and Deploy') {
-                    deploy(script)
-                }
+                    stage(script, 'Tag and Deploy') {
+                        deploy(script)
+                    }
 
-                stage(script, 'Publish Site') {
-                    site(script)
-                }
+                    stage(script, 'Publish Site') {
+                        site(script)
+                    }
 
-                stage(script, 'Notify External') {
-                    notifyExternal(script)
+                    stage(script, 'Notify External') {
+                        notifyExternal(script)
+                    }
                 }
             } finally {
                 stage(script, "Cleanup") {
