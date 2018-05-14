@@ -140,6 +140,11 @@ abstract class AbstractJenkinsPipeline implements Serializable {
      */
     void pipeline(def script) {
         def closure = {
+
+            script.tools {
+                maven 'Maven 3.3.9'
+            }
+
             stage(script, 'Checkout') {
                 checkout(script)
             }
