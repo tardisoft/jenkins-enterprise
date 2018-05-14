@@ -146,7 +146,7 @@ abstract class AbstractJenkinsPipeline implements Serializable {
             }
 
             try {
-                script.withMaven {
+                script.withMaven("Maven 3.3.9") {
                     try {
                         stage(script, 'Build and Test') {
                             buildAndTest(script)
