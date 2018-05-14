@@ -176,7 +176,11 @@ class MavenJenkinsPipeline extends AbstractJenkinsPipeline implements Serializab
     void publish(def script) {
         mavenBuildStep?.publish(script)
         for (Step step : publishers) {
-            step.run(script)
+            try {
+                step.run(script)
+            } catch(Exception e){
+                script.echo "Error: ${e?.getMessage()}, but continuing"
+            }
         }
     }
 

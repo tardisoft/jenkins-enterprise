@@ -149,6 +149,9 @@ abstract class AbstractJenkinsPipeline implements Serializable {
                     stage(script, 'Build and Test') {
                         buildAndTest(script)
                     }
+                } catch (Exception e) {
+                    script.echo "Error building ${e.getMessage()}"
+                    script.echo e.stackTrace
                 } finally {
                     if (script.currentBuild.result != 'ABORTED') {
                         stage(script, 'Publish Build Results') {
