@@ -1,6 +1,7 @@
 #!/usr/bin/groovy
 import io.tardisoft.jenkins.pipeline.maven.MavenJenkinsPipeline
 import io.tardisoft.jenkins.pipeline.maven.step.deploy.MavenGhPagesDeployStep
+import io.tardisoft.jenkins.pipeline.maven.step.notify.DatadogNotifyExternalStep
 import io.tardisoft.jenkins.pipeline.release.GitTagReleaseStrategy
 
 /**
@@ -42,6 +43,7 @@ def call(body) {
         pipeline.parentPom = config.parentPom
         pipeline.deploySite = config.deploySite
         pipeline.deploySteps = [new MavenGhPagesDeployStep(generateMavenSite: config.generateMavenSite, generateJavadoc: config.generateJavadoc)]
+        pipeline.notifyExternalStep = [new DatadogNotifyExternalStep()]
     }
 }
 
