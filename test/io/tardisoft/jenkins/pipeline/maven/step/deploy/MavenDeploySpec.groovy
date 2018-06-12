@@ -132,7 +132,7 @@ class MavenDeploySpec extends Specification {
                 artifactId: 'testProj',
                 version   : '1.0.1-SNAPSHOT'
         ]
-        script.scm.userRemoteConfigs = [[url: 'git@localhost']]
+        script.scm.userRemoteConfigs = [[url: 'git@localhost:foo/bar.git']]
         script.env.BRANCH_NAME = 'master'
         MavenDeployStep step = new MavenDeployStep()
         step.rootPom = 'pom.xml'
@@ -157,9 +157,9 @@ class MavenDeploySpec extends Specification {
 
         then:
         shArg == [
-                'mvn -f pom.xml scm:tag -nsu -Dusername=${GIT_USER} -Dpassword=${GIT_PASS} -Dtag=1.0.1-SNAPSHOT -DdeveloperConnectionUrl=scm:git:git@localhost -DconnectionUrl=scm:git:git@localhost',
+                'mvn -f pom.xml scm:tag -nsu -Dusername=${GIT_USER} -Dpassword=${GIT_PASS} -Dtag=1.0.1-SNAPSHOT -DdeveloperConnectionUrl=scm:git:git@localhost:foo/bar.git -DconnectionUrl=scm:git:git@localhost:foo/bar.git',
                 'mvn -f pom.xml deploy -nsu',
-                'curl -H "Content-Type: application/json" -H "Authorization: token ${GIT_PASS}" --data \'{"tag_name":"1.0.1-SNAPSHOT","name":"1.0.1-SNAPSHOT","body":"Release:\\r\\n\\tGroup ID: com.myorg.test\\r\\n\\tArtifact ID: testProj\\r\\n\\tVersion: 1.0.1-SNAPSHOT\\r\\n\\r\\nNotes:\\r\\n * (ADADAD) Refactor: Commit Message\\r\\n * (ADADAB) US1235: Commit Message2\\r\\n * (ADADAC) Refactor: HelloWorld","draft":false,"prerelease":false}\' https://api.github.com/repos/git@localhost/releases',
+                'curl -H "Content-Type: application/json" -H "Authorization: token ${GIT_PASS}" --data \'{"tag_name":"1.0.1-SNAPSHOT","name":"1.0.1-SNAPSHOT","body":"Release:\\r\\n\\tGroup ID: com.myorg.test\\r\\n\\tArtifact ID: testProj\\r\\n\\tVersion: 1.0.1-SNAPSHOT\\r\\n\\r\\nNotes:\\r\\n * (ADADAD) Refactor: Commit Message\\r\\n * (ADADAB) US1235: Commit Message2\\r\\n * (ADADAC) Refactor: HelloWorld","draft":false,"prerelease":false}\' https://api.github.com/repos/foo/bar/releases',
                 'find . -name usage*.txt -print -exec cat \'{}\' \';\' -exec echo " " \';\''
         ]
 

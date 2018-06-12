@@ -33,7 +33,12 @@ abstract class AbstractJenkinsPipeline implements Serializable {
     /**
      * Jenkins secrets ID to use for git credentials
      */
-    String gitCredentialsId = ''
+    String gitCredentialsId = 'github'
+
+    /**
+     * Jenkins secrets ID to use for git oauth credentials
+     */
+    String gitOauthCredentialsId = 'gitoauth'
 
     /**
      * Git hub context to use for pull requests

@@ -32,6 +32,10 @@ class MavenDeployStep extends MavenStep implements Serializable, Deploy {
      */
     String gitCredentialsId = 'gituser'
     /**
+     * Jenkins secrets ID of the Git credentials oauth
+     */
+    String gitOauthCredentialsId = 'gitoauth'
+    /**
      * Jenkins secrets ID of the artifactory credentials
      */
     String artifactoryCredentialsId = 'artifactory'
@@ -233,7 +237,7 @@ class MavenDeployStep extends MavenStep implements Serializable, Deploy {
             String branch = new Common(script).getBranch()
             def prNum = branch - "PR-"
             def postUrl = "${gitHubApiUrl}/repos/${path}/issues/${prNum}/comments"
-            script.withCredentials([script.usernamePassword(credentialsId: gitCredentialsId, usernameVariable: 'GIT_USER', passwordVariable: 'GIT_PASS')]) {
+            script.withCredentials([script.usernamePassword(credentialsId: gitOauthCredentialsId, usernameVariable: 'GIT_USER', passwordVariable: 'GIT_PASS')]) {
                 script.sh("""curl -H "Content-Type: application/json" -H "Authorization: token \${GIT_PASS}" --data '{"body": "${
                     usageMsg
                 }"}' ${postUrl}""")
@@ -295,7 +299,7 @@ class MavenDeployStep extends MavenStep implements Serializable, Deploy {
         String url = script.scm.userRemoteConfigs.first().url as String
         String name = getRepoName(url)
         def postUrl = "${gitHubApiUrl}/repos${name}/releases"
-        script.withCredentials([script.usernamePassword(credentialsId: gitCredentialsId, usernameVariable: 'GIT_USER', passwordVariable: 'GIT_PASS')]) {
+        script.withCredentials([script.usernamePassword(credentialsId: gitOauthCredentialsId, usernameVariable: 'GIT_USER', passwordVariable: 'GIT_PASS')]) {
             script.sh("""curl -H "Content-Type: application/json" -H "Authorization: token \${GIT_PASS}" --data '${
                 json
             }' ${postUrl}""")
@@ -311,7 +315,14 @@ class MavenDeployStep extends MavenStep implements Serializable, Deploy {
         if (matcher.find()) {
             name = matcher.group(4)
         } else if (uri.contains("@")) {
-            name = "/" + uri.split("@")[1].split(":")[1]
+            def s1 = uri.split("@")
+            if(s1?.length >= 2) {
+                def s = s1[1]
+                def s2 = s.split(":")
+                if(s2?.length >= 2) {
+                    name = "/" + s2[1]
+                }
+            }
         }
         name
     }

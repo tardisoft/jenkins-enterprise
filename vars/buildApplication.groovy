@@ -19,16 +19,17 @@ def call(body) {
     }
 
     def config = [
-            node             : '',
-            branchesToRelease: 'master',
-            updateStrategy   : new GitTagReleaseStrategy(),
-            gitCredentialsId : 'github',
-            rootPom          : 'pom.xml',
-            parentPom        : 'pom.xml',
-            deploySite       : false, //github gh-pages site
-            generateMavenSite: false,
-            generateJavadoc  : false,
-            runQualityGate   : false
+            node                 : '',
+            branchesToRelease    : 'master',
+            updateStrategy       : new GitTagReleaseStrategy(),
+            gitCredentialsId     : 'github',
+            gitOauthCredentialsId: 'gitoauth',
+            rootPom              : 'pom.xml',
+            parentPom            : 'pom.xml',
+            deploySite           : false, //github gh-pages site
+            generateMavenSite    : false,
+            generateJavadoc      : false,
+            runQualityGate       : false
     ]
     config.putAll(overrideConfig)
 
@@ -38,6 +39,7 @@ def call(body) {
         pipeline.nodeLabel = config.node
         pipeline.releaseBranches = (List<String>) (config.branchesToRelease instanceof Collection ? config.branchesToRelease : [config.branchesToRelease])
         pipeline.gitCredentialsId = config.gitCredentialsId
+        pipeline.gitOauthCredentialsId = config.gitOauthCredentialsId
         pipeline.updateVersionStep.updateStrategy = config.updateStrategy
         pipeline.rootPom = config.rootPom
         pipeline.parentPom = config.parentPom

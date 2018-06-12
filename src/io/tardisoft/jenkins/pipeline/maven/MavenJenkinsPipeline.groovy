@@ -252,6 +252,7 @@ class MavenJenkinsPipeline extends AbstractJenkinsPipeline implements Serializab
         mavenDeployStep.mavenGoals.addAll(mavenBuildStep.mavenGoals)
 
         mavenDeployStep.gitCredentialsId = gitCredentialsId
+        mavenDeployStep.gitOauthCredentialsId = gitOauthCredentialsId
         mavenDeployStep.artifactoryCredentialsId = artifactoryCredentialsId
         mavenDeployStep.rootPom = rootPom
         mavenDeployStep.parentPom = parentPom
