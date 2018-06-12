@@ -3,6 +3,7 @@ package io.tardisoft.jenkins.pipeline.maven.step.deploy
 import io.tardisoft.jenkins.pipeline.maven.step.deploy.MavenDeployStep
 import io.tardisoft.jenkins.pipeline.test.JenkinsScript
 import spock.lang.Specification
+import spock.lang.Unroll
 
 class MavenDeploySpec extends Specification {
 
@@ -271,6 +272,52 @@ class MavenDeploySpec extends Specification {
 
         then:
         shArg == """curl -H "Content-Type: application/json" -H "Authorization: token \${GIT_PASS}" --data '{"body": "[http://localhost/build12](http://localhost/build12)\\r\\nBuild Number: [PR-1 12](http://localhost/build12)\\r\\nBuild Duration: 5m 12s \\r\\n\\r\\nUsage:\\r\\n```xml\\r\\n<dependency>\\r\\n    <groupId>com.myorg.test</groupId>\\r\\n    <artifactId>testProj</artifactId>\\r\\n    <version>1.0.1-SNAPSHOT</version>\\r\\n</dependency>\\r\\n```"}' https://api.github.com/repos/git@localhost/issues/1/comments"""
+    }
+
+    @Unroll
+    def "test release github curl for #url #repo"() {
+        setup:
+        JenkinsScript script = Spy(JenkinsScript)
+        def pom = [
+                groupId   : 'com.myorg.test',
+                artifactId: 'testProj',
+                version   : '1.0.1-SNAPSHOT'
+        ]
+        script.poms['pom.xml'] = pom
+        script.scm.userRemoteConfigs = [['url': url]]
+        script.env.BRANCH_NAME = 'PR-1'
+        MavenDeployStep step = new MavenDeployStep()
+        step.rootPom = 'pom.xml'
+        step.jvmArgs = null
+        step.mavenArgs = null
+        step.localRepo = false
+        step.releaseBranches = ['master']
+        step.skipPrintUsage = false
+        step.skipGitHubPullRequestComment = false
+        script.currentBuild.displayName = 'PR-1 #12'
+        script.currentBuild.durationString = '5m 12s and counting'
+        script.currentBuild.absoluteUrl = 'http://localhost/build12'
+        String shArg = ''
+
+        when:
+        step.createGithubRelease(script, pom, "")
+
+        then:
+        1 * script.getEnv() >> [BRANCH_NAME: 'master']
+        1 * script.withCredentials(_, _)
+        1 * script.sh({ args ->
+            shArg = args
+        })
+
+        then:
+        shArg == """curl -H "Content-Type: application/json" -H "Authorization: token \${GIT_PASS}" --data '{"tag_name":"1.0.1-SNAPSHOT","name":"1.0.1-SNAPSHOT","body":"Release:\\r\\n\\tGroup ID: com.myorg.test\\r\\n\\tArtifact ID: testProj\\r\\n\\tVersion: 1.0.1-SNAPSHOT","draft":false,"prerelease":false}' https://api.github.com/repos/$repo/releases"""
+
+        where:
+        url                                              | repo
+        "https://www.github.com/tardisoft/foo-repo"      | "tardisoft/foo-repo"
+        "http://www.github.com/tardisoft1/foo-repo"      | "tardisoft1/foo-repo"
+        "https://www.github.com/tardisoft2/foo-repo.git" | "tardisoft2/foo-repo"
+        "git@github.com:tardisoft/micrometer-demo.git"   | "tardisoft/micrometer-demo"
 
     }
 

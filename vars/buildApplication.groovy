@@ -24,7 +24,7 @@ def call(body) {
             gitCredentialsId : 'github',
             rootPom          : 'pom.xml',
             parentPom        : 'pom.xml',
-            deploySite       : false,
+            deploySite       : false, //github gh-pages site
             generateMavenSite: false,
             generateJavadoc  : false,
             runQualityGate   : false

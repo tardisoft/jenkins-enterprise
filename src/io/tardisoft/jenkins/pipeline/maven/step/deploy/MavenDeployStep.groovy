@@ -2,14 +2,18 @@ package io.tardisoft.jenkins.pipeline.maven.step.deploy
 
 import groovy.json.JsonOutput
 import io.tardisoft.jenkins.pipeline.maven.build.goal.MavenBuildGoal
+import io.tardisoft.jenkins.pipeline.maven.step.MavenStep
 import io.tardisoft.jenkins.pipeline.step.deploy.Deploy
 import io.tardisoft.jenkins.pipeline.util.Common
 import org.apache.commons.lang.StringUtils
 
+import java.util.regex.Matcher
+import java.util.regex.Pattern
+
 /**
  * Step to deploy maven artifacts to artifactory
  */
-class MavenDeployStep extends io.tardisoft.jenkins.pipeline.maven.step.MavenStep implements Serializable, Deploy {
+class MavenDeployStep extends MavenStep implements Serializable, Deploy {
     /**
      * The root pom to use, such as a aggregator or the base build point, usually just pom.xml
      */
@@ -288,9 +292,15 @@ class MavenDeployStep extends io.tardisoft.jenkins.pipeline.maven.step.MavenStep
                 "prerelease": false
         ])
         String url = script.scm.userRemoteConfigs.first().url as String
-        def rootUrl = gitHubApiUrl - 'api/v3'
-        def path = url - rootUrl - '.git'
-        def postUrl = "${gitHubApiUrl}/repos/${path}/releases"
+        def uri = url.replaceAll('\\.git$', "")
+        Matcher matcher = Pattern.compile("(https?://)([^:^/]*)(:\\d*)?(.*)?").matcher(uri)
+        def name = ""
+        if (matcher.find()) {
+            name = matcher.group(4)
+        } else if (uri.contains("@")) {
+            name = "/" + uri.split("@")[1].split(":")[1]
+        }
+        def postUrl = "${gitHubApiUrl}/repos${name}/releases"
         script.withCredentials([script.usernamePassword(credentialsId: gitCredentialsId, usernameVariable: 'GIT_USER', passwordVariable: 'GIT_PASS')]) {
             script.sh("""curl -H "Content-Type: application/json" -H "Authorization: token \${GIT_PASS}" --data '${
                 json

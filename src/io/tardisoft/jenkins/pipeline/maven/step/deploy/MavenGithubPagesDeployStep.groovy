@@ -1,8 +1,11 @@
 package io.tardisoft.jenkins.pipeline.maven.step.deploy
+
+import io.tardisoft.jenkins.pipeline.maven.step.AbstractMavenGithubStep
+
 /**
  * Deploys the staging site to git hub gh-pages branch of the repository
  */
-class MavenGithubPagesDeployStep extends io.tardisoft.jenkins.pipeline.maven.step.AbstractMavenGithubStep implements Serializable {
+class MavenGithubPagesDeployStep extends AbstractMavenGithubStep implements Serializable {
     
     MavenGithubPagesDeployStep() {
         mavenProfiles = ['deploy-github-page']

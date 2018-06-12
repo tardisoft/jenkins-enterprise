@@ -78,7 +78,7 @@ class MavenJenkinsPipeline extends AbstractJenkinsPipeline implements Serializab
     /**
      * Deploys to artifacts to artifactory and prints out usage information and updates pull request with comment on build
      */
-    MavenDeployStep Deploy = new MavenDeployStep()
+    MavenDeployStep mavenDeployStep = new MavenDeployStep()
     /**
      * if true: Deploy the maven site to the gh-pages (Github Pages) branch, default false
      */
@@ -227,10 +227,8 @@ class MavenJenkinsPipeline extends AbstractJenkinsPipeline implements Serializab
         }
 
         deploySteps.each { deployStep ->
-
             setGitHubPullRequestStatus script, "Deploy step ${deployStep.getClass().simpleName}", 'PENDING'
-
-            deployStep.mavenGoals.addAll(MavenBuild.mavenGoals)
+            deployStep.mavenGoals.addAll(mavenBuildStep.mavenGoals)
             addMavenConfig(deployStep)
             deployStep.version = this.updateVersionStep.newVersion
             deployStep.gitCredentialsId = gitCredentialsId
@@ -244,23 +242,23 @@ class MavenJenkinsPipeline extends AbstractJenkinsPipeline implements Serializab
      * @param script Jenkinsfile script context
      */
     void deployMaven(def script) {
-        if (Deploy == null) {
+        if (mavenDeployStep == null) {
             return
         }
         setGitHubPullRequestStatus script, "Deploying maven artifacts", 'PENDING'
 
-        addMavenConfig(Deploy)
+        addMavenConfig(mavenDeployStep)
 
-        Deploy.mavenGoals.addAll(mavenBuildStep.mavenGoals)
+        mavenDeployStep.mavenGoals.addAll(mavenBuildStep.mavenGoals)
 
-        Deploy.gitCredentialsId = gitCredentialsId
-        Deploy.artifactoryCredentialsId = artifactoryCredentialsId
-        Deploy.rootPom = rootPom
-        Deploy.parentPom = parentPom
-        Deploy.releaseBranches = releaseBranches
-        Deploy.skipGitHubPullRequestComment = skipPullRequestStatus
-        Deploy.tagPrefix = tagPrefix
-        Deploy.run(script)
+        mavenDeployStep.gitCredentialsId = gitCredentialsId
+        mavenDeployStep.artifactoryCredentialsId = artifactoryCredentialsId
+        mavenDeployStep.rootPom = rootPom
+        mavenDeployStep.parentPom = parentPom
+        mavenDeployStep.releaseBranches = releaseBranches
+        mavenDeployStep.skipGitHubPullRequestComment = skipPullRequestStatus
+        mavenDeployStep.tagPrefix = tagPrefix
+        mavenDeployStep.run(script)
     }
 
     /**
