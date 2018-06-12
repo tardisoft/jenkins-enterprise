@@ -1,5 +1,6 @@
 package io.tardisoft.jenkins.pipeline.maven.step.deploy
 
+import com.cloudbees.groovy.cps.NonCPS
 import groovy.json.JsonOutput
 import io.tardisoft.jenkins.pipeline.maven.build.goal.MavenBuildGoal
 import io.tardisoft.jenkins.pipeline.maven.step.MavenStep
@@ -292,6 +293,18 @@ class MavenDeployStep extends MavenStep implements Serializable, Deploy {
                 "prerelease": false
         ])
         String url = script.scm.userRemoteConfigs.first().url as String
+        String name = getRepoName(url)
+        def postUrl = "${gitHubApiUrl}/repos${name}/releases"
+        script.withCredentials([script.usernamePassword(credentialsId: gitCredentialsId, usernameVariable: 'GIT_USER', passwordVariable: 'GIT_PASS')]) {
+            script.sh("""curl -H "Content-Type: application/json" -H "Authorization: token \${GIT_PASS}" --data '${
+                json
+            }' ${postUrl}""")
+        }
+    }
+
+
+    @NonCPS
+    private static String getRepoName(String url) {
         def uri = url.replaceAll('\\.git$', "")
         Matcher matcher = Pattern.compile("(https?://)([^:^/]*)(:\\d*)?(.*)?").matcher(uri)
         def name = ""
@@ -300,11 +313,6 @@ class MavenDeployStep extends MavenStep implements Serializable, Deploy {
         } else if (uri.contains("@")) {
             name = "/" + uri.split("@")[1].split(":")[1]
         }
-        def postUrl = "${gitHubApiUrl}/repos${name}/releases"
-        script.withCredentials([script.usernamePassword(credentialsId: gitCredentialsId, usernameVariable: 'GIT_USER', passwordVariable: 'GIT_PASS')]) {
-            script.sh("""curl -H "Content-Type: application/json" -H "Authorization: token \${GIT_PASS}" --data '${
-                json
-            }' ${postUrl}""")
-        }
+        name
     }
 }
