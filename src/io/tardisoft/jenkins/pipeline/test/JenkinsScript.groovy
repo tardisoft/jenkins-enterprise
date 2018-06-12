@@ -11,6 +11,12 @@ class JenkinsScript {
     Map poms = [:]
     Map files = [:]
 
+    def withMaven(Map map, Closure closure) {
+        logCall("withMaven(${map.maven})")
+        closure()
+        logCall('end withMaven()')
+    }
+
     def logRotator(def input) {
         logCall("logRotator($input)")
     }

@@ -18,7 +18,7 @@ class DatadogNotifyExternalStep extends AbstractNotifyExternalStep {
             script.sh("""curl  -X POST -H "Content-type: application/json" \\
     -d '{
           "title": "Application Build Event - ${common.getRepo()}",
-          "text": "Application was build ${new Date()}.",
+          "text": "Application was built.",
           "priority": "normal",
           "tags": ["org:${common.getOrg()}", "repo:${common.getRepo()}", "environment:build", "branch:${common.getBranch()}"],
           "alert_type": "info"
