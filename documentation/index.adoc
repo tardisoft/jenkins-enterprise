@@ -37,9 +37,9 @@ buildApplication {
 
 ==== deploySite
 
-Set to true if your application has a `documentation` directory with adoc that should be deployed to the gh-pages branch.
+Set to true if your application has a `documentation` directory with asciidoc that should be deployed to the gh-pages branch.
 
-In Jenkins requires a username/password credential with your user and password under a variable `github`. You can change the name of the credential using the optional `gitCredentialsId` in the closure.
+Jenkins requires a username/password credential with your user and password under a variable `github`. You can change the name of the credential using the optional `gitCredentialsId` in the closure.
 
 .Example
 
@@ -194,6 +194,25 @@ Requires setting up asciidocs using the following properties and profile `asciid
         </profile>
     </profiles>
 ----
+
+==== generateMavenSite
+
+This will allow you to generate a maven site which can be pushed to gh-pages.  This will also use the profile from above `asciidoc-github-page`.  The default behavior here is to put the maven site under the target/site/maven-site directory which can be linked from your asciidocs with something like `link:maven-site/index.html`.  This is typically used in conjunction with `deploSite`.
+
+.Example
+
+[source]
+----
+#!groovy
+@Library('jenkins-enterprise@master')
+import java.lang.Object
+
+buildApplication {
+	deploySite = true
+	generateMavenSite = true
+}
+----
+
 
 ==== branchesToRelease
 
