@@ -20,7 +20,7 @@ def call(body) {
 
     def config = [
             node                 : '',
-            branchesToRelease    : 'master',
+            branchesToRelease    : ['master'],
             updateStrategy       : new GitTagReleaseStrategy(),
             gitCredentialsId     : 'github',
             gitOauthCredentialsId: 'gitoauth',
