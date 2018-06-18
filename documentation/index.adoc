@@ -17,7 +17,7 @@ Christian Oestreich
 
 Maven site which includes dependency and plugin version and information for the current pom is located at link:maven-site/index.html[Maven Docs]
 
-== Usage
+=== Usage
 
 Create a `Jenkinsfile` in your application and use the following for simple builds.
 
@@ -31,9 +31,9 @@ buildApplication {
 }
 ----
 
-== Build Configurations
+=== Build Configurations
 
-=== deploySite
+==== deploySite
 
 Set to true if your application has a `documentation` directory with adoc that should be deployed to the gh-pages branch.
 
@@ -55,7 +55,145 @@ buildApplication {
 }
 ----
 
-=== branchesToRelease
+Requires setting up asciidocs using the following properties and profile `asciidoc-github-page` in your pom.xml
+
+[source,xml]
+----
+	...
+	<properties>
+		...
+		<asciidoctor-maven-plugin.version>1.5.6</asciidoctor-maven-plugin.version>
+		<asciidoctorj.version>1.5.6</asciidoctorj.version>
+		<asciidoctorj.diagram.version>1.5.4.1</asciidoctorj.diagram.version>
+		<asciidoclet.version>1.5.4</asciidoclet.version>
+		<documentation.input.dir>${project.basedir}/documentation</documentation.input.dir>
+		<documentation.output.dir>${project.build.directory}/site</documentation.output.dir>
+		<documentation.snippets.dir>${project.build.directory}/snippets</documentation.snippets.dir>
+		<documentation.images.dir>images</documentation.images.dir>
+		<asciidoc.overview.path>src/main/java/overview.adoc</asciidoc.overview.path>
+		<jruby.version>1.7.26</jruby.version>
+		<github.repositoryOwner>tardisoft</github.repositoryOwner>
+		<github.repositoryName>${project.artifactId}</github.repositoryName>
+		<github.global.server>github</github.global.server>
+		...
+	</properties>
+	...
+ 	<profiles>
+        <profile>
+            <id>asciidoc-github-page</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <configuration>
+                            <source>1.8</source>
+                            <doclet>org.asciidoctor.Asciidoclet</doclet>
+                            <docletArtifact>
+                                <groupId>org.asciidoctor</groupId>
+                                <artifactId>asciidoclet</artifactId>
+                                <version>${asciidoclet.version}</version>
+                            </docletArtifact>
+                            <overview>${asciidoc.overview.path}</overview>
+                            <additionalparam>
+                                --base-dir ${project.basedir}
+                                --attribute "name=${project.name}"
+                                --attribute "version=${project.version}"
+                                --attribute
+                                "title-link=https://www.github.com/tardisoft/${project.name}[${project.name}
+                                ${project.version}]"
+                            </additionalparam>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <artifactId>maven-site-plugin</artifactId>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/site/maven-site</outputDirectory>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.asciidoctor</groupId>
+                        <artifactId>asciidoctor-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>generate-docs</id>
+                                <phase>prepare-package</phase>
+                                <goals>
+                                    <goal>process-asciidoc</goal>
+                                </goals>
+                                <configuration>
+                                    <backend>html</backend>
+                                    <doctype>book</doctype>
+                                </configuration>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <sourceDirectory>${documentation.input.dir}</sourceDirectory>
+                            <sourceDocumentName>index.adoc</sourceDocumentName>
+                            <outputDirectory>${documentation.output.dir}</outputDirectory>
+                            <sourceHighlighter>highlightjs</sourceHighlighter>
+                            <backend>html5</backend>
+                            <doctype>book</doctype>
+                            <attributes>
+                                <icons>font</icons>
+                                <toc>left</toc>
+                                <version>${project.version}</version>
+                                <highlightjsTheme>darcula</highlightjsTheme>
+                                <imagesdir>${documentation.images.dir}</imagesdir>
+                                <snippets>${documentation.snippets.dir}</snippets>
+                            </attributes>
+                            <requires>
+                                <require>asciidoctor-diagram</require>
+                            </requires>
+                        </configuration>
+                        <dependencies>
+                            <!-- Comment this section to use the default jruby artifact provided by the plugin -->
+                            <dependency>
+                                <groupId>org.jruby</groupId>
+                                <artifactId>jruby-complete</artifactId>
+                                <version>${jruby.version}</version>
+                            </dependency>
+                            <!-- Comment this section to use the default AsciidoctorJ artifact provided by the plugin -->
+                            <dependency>
+                                <groupId>org.asciidoctor</groupId>
+                                <artifactId>asciidoctorj</artifactId>
+                                <version>${asciidoctorj.version}</version>
+                            </dependency>
+                            <dependency>
+                                <groupId>org.asciidoctor</groupId>
+                                <artifactId>asciidoctorj-diagram</artifactId>
+                                <version>${asciidoctorj.diagram.version}</version>
+                            </dependency>
+                            <dependency>
+                                <groupId>org.asciidoctor</groupId>
+                                <artifactId>asciidoclet</artifactId>
+                                <version>${asciidoclet.version}</version>
+                            </dependency>
+                        </dependencies>
+                    </plugin>
+                    <plugin>
+                        <groupId>com.github.github</groupId>
+                        <artifactId>site-maven-plugin</artifactId>
+                        <configuration>
+                            <message>Refactor: Creating site for ${project.version}</message>
+                            <excludes>
+                                <exclude>jacoco/**</exclude>
+                                <exclude>checkstyle.*</exclude>
+                                <exclude>codenarc.*</exclude>
+                            </excludes>
+                            <host>api.github.com</host>
+                            <server>github</server>
+                            <repositoryOwner>${github.repositoryOwner}</repositoryOwner>
+                            <repositoryName>${github.repositoryName}</repositoryName>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+----
+
+==== branchesToRelease
 
 This is a single name of list of branches that should be considered release branches.  Defaults to 'master'.
 
@@ -72,7 +210,7 @@ buildApplication {
 }
 ----
 
-=== updateStrategy
+==== updateStrategy
 
 This is the version strategy to use.  Currently the following are supported:
 
@@ -127,7 +265,7 @@ buildApplication {
 }
 ----
 
-==== Custom Version Strategy
+===== Custom Version Strategy
 
 You can create your own version strategy by extending `ReleaseStrategy`.
 
