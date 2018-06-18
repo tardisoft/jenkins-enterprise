@@ -1,0 +1,159 @@
+= Jenkins Enterprise Library
+Christian Oestreich
+:imagesdir: ./
+:sourcedir: ../src/main/java
+:testdir: ../src/test/java
+:varsdir: ../vars
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:highlightjs-theme: darcula
+:numbered:
+:toc:
+:toclevels: 4
+:sectlinks:
+
+== Maven Docs
+
+Maven site which includes dependency and plugin version and information for the current pom is located at link:maven-site/index.html[Maven Docs]
+
+== Usage
+
+Create a `Jenkinsfile` in your application and use the following for simple builds.
+
+[source,groovy]
+----
+#!groovy
+@Library('jenkins-enterprise@master')
+import java.lang.Object
+
+buildApplication {
+}
+----
+
+== Build Configurations
+
+=== deploySite
+
+Set to true if your application has a `documentation` directory with adoc that should be deployed to the gh-pages branch.
+
+In Jenkins requires a username/password credential with your user and password under a variable `github`. You can change the name of the credential using the optional `gitCredentialsId` in the closure.
+
+.Example
+
+[source,groovy]
+----
+#!groovy
+@Library('jenkins-enterprise@master')
+import java.lang.Object
+
+buildApplication {
+	deploySite = true
+
+	//optionally change default credentials ID to use
+	gitCredentialsId = 'jenkins_github_creds_id' //defaults to `github`
+}
+----
+
+=== branchesToRelease
+
+This is a single name of list of branches that should be considered release branches.  Defaults to 'master'.
+
+.Example
+
+[source,groovy]
+----
+#!groovy
+@Library('jenkins-enterprise@master')
+import java.lang.Object
+
+buildApplication {
+	branchesToRelease = ['master', 'release/production']
+}
+----
+
+=== updateStrategy
+
+This is the version strategy to use.  Currently the following are supported:
+
+*io.tardisoft.jenkins.pipeline.release.GitTagReleaseStrategy*
+
+This will use the version in your build config and remove the `-SNAPSHOT` if the current branch matches branchesToRelease above.
+
+.Example
+
+[source,groovy]
+----
+#!groovy
+@Library('jenkins-enterprise@master')
+import io.tardisoft.jenkins.pipeline.release.GitTagReleaseStrategy
+
+buildApplication {
+	updateStrategy = new GitTagReleaseStrategy()
+}
+----
+
+*io.tardisoft.jenkins.pipeline.release.SpringReleaseStrategy*
+
+This will use the version plus `.RELEASE` and remove the `-SNAPSHOT` if the current branch matches branchesToRelease above.
+
+.Example
+
+[source,groovy]
+----
+#!groovy
+@Library('jenkins-enterprise@master')
+import io.tardisoft.jenkins.pipeline.release.SpringReleaseStrategy
+
+buildApplication {
+	updateStrategy = new SpringReleaseStrategy()
+}
+----
+
+*io.tardisoft.jenkins.pipeline.release.BasicReleaseStrategy*
+
+Basic release versioning strategy that strips snapshot name for releases and adds branch name for branch snapshot builds.
+
+.Example
+
+[source,groovy]
+----
+#!groovy
+@Library('jenkins-enterprise@master')
+import io.tardisoft.jenkins.pipeline.release.BasicReleaseStrategy
+
+buildApplication {
+	updateStrategy = new BasicReleaseStrategy()
+}
+----
+
+==== Custom Version Strategy
+
+You can create your own version strategy by extending `ReleaseStrategy`.
+
+.Example
+
+[source,groovy]
+----
+#!groovy
+@Library('jenkins-enterprise@master')
+import io.tardisoft.jenkins.pipeline.release.ReleaseStrategy
+
+buildApplication {
+	updateStrategy = new CustomReleaseStrategy()
+}
+
+class CustomReleaseStrategy implements ReleaseStrategy {
+    @Override
+    String snapshotVersion(Object script, Object pom) {
+        script.echo "snapshot hardcoded to 1.0.0.CUSTOM-SNAPSHOT"
+        return "1.0.0.CUSTOM-SNAPSHOT"
+    }
+
+    @Override
+    String releaseVersion(Object script, Object pom) {
+        script.echo "release hardcoded to 1.0.0.CUSTOM.RELEASE"
+        return "1.0.0.CUSTOM.RELEASE"
+    }
+}
+----
