@@ -4,4 +4,5 @@ import java.lang.Object
 
 buildApplication {
     deploySite = true
+    generateMavenSite = true
 }
