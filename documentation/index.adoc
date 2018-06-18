@@ -6,6 +6,7 @@ Christian Oestreich
 :varsdir: ../vars
 :doctype: book
 :icons: font
+:highlightjsdir: highlight
 :source-highlighter: highlightjs
 :source-language: groovy
 :highlightjs-theme: darcula
