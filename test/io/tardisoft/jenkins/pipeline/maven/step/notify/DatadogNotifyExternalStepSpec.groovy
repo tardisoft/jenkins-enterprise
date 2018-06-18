@@ -6,7 +6,6 @@ import io.tardisoft.jenkins.pipeline.test.JenkinsScript
 import jenkins.model.Jenkins
 import spock.lang.Specification
 
-
 class DatadogNotifyExternalStepSpec extends Specification {
     JenkinsScript script = Spy(JenkinsScript)
 
