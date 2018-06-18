@@ -23,7 +23,7 @@ class DatadogNotifyExternalStep extends AbstractNotifyExternalStep {
           "tags": ["org:${common.getOrg()}", "repo:${common.getRepo()}", "environment:build", "branch:${common.getBranch()}"],
           "alert_type": "info"
     }' \\
-    'https://api.datadoghq.com/api/v1/events?api_key=\$DD_API_KEY'
+    'https://api.datadoghq.com/api/v1/events?api_key=\${DD_API_KEY}'
     """)
         }
     }

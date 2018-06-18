@@ -53,7 +53,7 @@ class DatadogNotifyExternalStepSpec extends Specification {
                         '          "tags": ["org:child-org", "repo:foo-application", "environment:build", "branch:master"],\n' +
                         '          "alert_type": "info"\n' +
                         '    }\' \\\n' +
-                        '    \'https://api.datadoghq.com/api/v1/events?api_key=$DD_API_KEY\'\n' +
+                        '    \'https://api.datadoghq.com/api/v1/events?api_key=${DD_API_KEY}\'\n' +
                         '    '
         ]
     }
