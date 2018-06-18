@@ -7,6 +7,7 @@ Christian Oestreich
 :doctype: book
 :icons: font
 :source-highlighter: highlightjs
+:source-language: groovy
 :highlightjs-theme: darcula
 :numbered:
 :toc:
@@ -21,7 +22,7 @@ Maven site which includes dependency and plugin version and information for the 
 
 Create a `Jenkinsfile` in your application and use the following for simple builds.
 
-[source,groovy]
+[source]
 ----
 #!groovy
 @Library('jenkins-enterprise@master')
@@ -41,7 +42,7 @@ In Jenkins requires a username/password credential with your user and password u
 
 .Example
 
-[source,groovy]
+[source]
 ----
 #!groovy
 @Library('jenkins-enterprise@master')
@@ -199,7 +200,7 @@ This is a single name of list of branches that should be considered release bran
 
 .Example
 
-[source,groovy]
+[source]
 ----
 #!groovy
 @Library('jenkins-enterprise@master')
@@ -220,7 +221,7 @@ This will use the version in your build config and remove the `-SNAPSHOT` if the
 
 .Example
 
-[source,groovy]
+[source]
 ----
 #!groovy
 @Library('jenkins-enterprise@master')
@@ -237,7 +238,7 @@ This will use the version plus `.RELEASE` and remove the `-SNAPSHOT` if the curr
 
 .Example
 
-[source,groovy]
+[source]
 ----
 #!groovy
 @Library('jenkins-enterprise@master')
@@ -254,7 +255,7 @@ Basic release versioning strategy that strips snapshot name for releases and add
 
 .Example
 
-[source,groovy]
+[source]
 ----
 #!groovy
 @Library('jenkins-enterprise@master')
@@ -271,7 +272,7 @@ You can create your own version strategy by extending `ReleaseStrategy`.
 
 .Example
 
-[source,groovy]
+[source]
 ----
 #!groovy
 @Library('jenkins-enterprise@master')
