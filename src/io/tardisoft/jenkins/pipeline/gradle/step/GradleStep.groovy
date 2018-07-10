@@ -55,13 +55,6 @@ abstract class GradleStep implements Serializable, Step {
     }
 
     /**
-     * Build the string for java VM arguments, also known as Gradle options
-     */
-    String getGradleOpts() {
-        return getJvmArgs()?.findAll { str -> StringUtils.isNotBlank(str) }?.join(" ") ?: ""
-    }
-
-    /**
      * Invoke the gradle command from the step, delegates to {@link #gradle(java.lang.Object, java.util.List)}
      * @param script Jenkinsfile script context
      * @param arg arguments to call gradle with
@@ -96,7 +89,6 @@ abstract class GradleStep implements Serializable, Step {
 
         String gradleArgStr = getGradleArgLine(args)
         List<String> fullCommandList = []
-        fullCommandList.add(gradleOpts)
         fullCommandList.add(gradle)
         fullCommandList.add(gradleArgStr)
 
