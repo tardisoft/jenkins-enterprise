@@ -19,7 +19,7 @@ class GradleBuild extends GradleStep implements Serializable, Build {
     /**
      * List of gradle goals to call, default clean, install
      */
-    LinkedHashSet<String> goals = ["clean", "install"]
+    LinkedHashSet<String> goals = ["clean", "test"]
     /**
      * True if gradle should enable the -fae option
      */
