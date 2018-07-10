@@ -39,7 +39,7 @@ class JUnitGoal implements Serializable, GradleBuildGoal {
 
     @Override
     void setupBuild(def script, GradleBuild build) {
-        build.goals += 'check'
+        build.goals += 'test'
         if (testFailsureIgnore) {
             build.gradleArgs.add("-x test ")
         }

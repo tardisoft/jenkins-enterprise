@@ -19,7 +19,8 @@ abstract class GradleStep implements Serializable, Step {
      * Default Gradle arguments to use
      */
     public static final List<String> DEFAULT_GRADLE_ARGS = [
-            "-s"
+            "-s",
+            "--no-daemon"
     ].asImmutable()
 
     /**

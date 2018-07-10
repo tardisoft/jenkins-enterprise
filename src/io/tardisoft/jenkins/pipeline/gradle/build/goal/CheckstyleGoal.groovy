@@ -78,7 +78,7 @@ class CheckstyleGoal implements Serializable, GradleBuildGoal {
      */
     @Override
     void setupBuild(def script, GradleBuild build) {
-
+        build.goals += "checkstyleMain"
     }
 
     /**
@@ -88,6 +88,8 @@ class CheckstyleGoal implements Serializable, GradleBuildGoal {
      */
     @Override
     void setupDeploy(Object script, GradleStep build) {
-        build.gradleArgs.add("-x checkstyleMain")
+        build.gradleArgs.addAll([
+                "-x checkstyleMain "
+        ])
     }
 }
