@@ -1,6 +1,5 @@
 #!/usr/bin/groovy
-import io.tardisoft.jenkins.pipeline.maven.MavenJenkinsPipeline
-import io.tardisoft.jenkins.pipeline.maven.step.deploy.MavenGhPagesDeployStep
+import io.tardisoft.jenkins.pipeline.gradle.GradleJenkinsPipeline
 import io.tardisoft.jenkins.pipeline.notify.DatadogNotifyExternalStep
 import io.tardisoft.jenkins.pipeline.release.GitTagReleaseStrategy
 
@@ -24,28 +23,20 @@ def call(body) {
             updateStrategy       : new GitTagReleaseStrategy(),
             gitCredentialsId     : 'github',
             gitOauthCredentialsId: 'gitoauth',
-            rootPom              : 'pom.xml',
-            parentPom            : 'pom.xml',
             deploySite           : false, //github gh-pages site
-            generateMavenSite    : false,
             generateJavadoc      : false,
             runQualityGate       : false
     ]
     config.putAll(overrideConfig)
 
-    MavenJenkinsPipeline pipeline = new MavenJenkinsPipeline(runQualityGate: config.runQualityGate)
-
+    GradleJenkinsPipeline pipeline = new GradleJenkinsPipeline()
     pipeline.run(this) {
         pipeline.nodeLabel = config.node
         pipeline.releaseBranches = (List<String>) (config.branchesToRelease instanceof Collection ? config.branchesToRelease : [config.branchesToRelease])
         pipeline.gitCredentialsId = config.gitCredentialsId
         pipeline.gitOauthCredentialsId = config.gitOauthCredentialsId
-        pipeline.updateVersionStep.updateStrategy = config.updateStrategy
-        pipeline.rootPom = config.rootPom
-        pipeline.parentPom = config.parentPom
-        pipeline.deploySite = config.deploySite
-        pipeline.deploySteps = [new MavenGhPagesDeployStep(generateMavenSite: config.generateMavenSite, generateJavadoc: config.generateJavadoc)]
         pipeline.notifyExternalStep = [new DatadogNotifyExternalStep()]
     }
+
 }
 
