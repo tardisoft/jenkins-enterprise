@@ -44,7 +44,6 @@ class GradleBuild extends GradleStep implements Serializable, Build {
             goal.setupBuild(script, this)
         }
         List<String> args = []
-        args.add("-v")
         args.addAll(goals.findAll({ str -> StringUtils.isNotBlank(str) }))
         if (!failAtEnd) {
             args.add('--continue')
