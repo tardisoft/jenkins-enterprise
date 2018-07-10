@@ -1,8 +1,7 @@
 package io.tardisoft.jenkins.pipeline.maven
 
 import hudson.PluginManager
-import io.tardisoft.jenkins.pipeline.maven.MavenJenkinsPipeline
-import io.tardisoft.jenkins.pipeline.maven.step.notify.AbstractNotifyExternalStep
+import io.tardisoft.jenkins.pipeline.notify.AbstractNotifyExternalStep
 import io.tardisoft.jenkins.pipeline.test.JenkinsScript
 import io.tardisoft.jenkins.pipeline.util.Common
 import jenkins.model.Jenkins

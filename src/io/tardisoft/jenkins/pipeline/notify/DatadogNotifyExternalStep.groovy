@@ -1,4 +1,4 @@
-package io.tardisoft.jenkins.pipeline.maven.step.notify
+package io.tardisoft.jenkins.pipeline.notify
 
 import io.tardisoft.jenkins.pipeline.util.Common
 

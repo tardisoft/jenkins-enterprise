@@ -19,7 +19,7 @@ services:
       nofile:
         soft: 32000
         hard: 40000
-  Jenkinsfile:
+  artifactory:
     image: docker.bintray.io/jfrog/artifactory-oss:5.11.0
     container_name: artifactory
     ports:

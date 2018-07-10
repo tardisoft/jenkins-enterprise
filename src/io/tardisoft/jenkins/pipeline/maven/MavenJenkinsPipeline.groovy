@@ -3,13 +3,13 @@ package io.tardisoft.jenkins.pipeline.maven
 import io.tardisoft.jenkins.pipeline.AbstractJenkinsPipeline
 import io.tardisoft.jenkins.pipeline.maven.build.MavenBuild
 import io.tardisoft.jenkins.pipeline.maven.step.AbstractMavenGithubStep
-import io.tardisoft.jenkins.pipeline.maven.step.ArchiveArtifactsStep
+import io.tardisoft.jenkins.pipeline.step.ArchiveArtifactsStep
 import io.tardisoft.jenkins.pipeline.maven.step.MavenStep
 import io.tardisoft.jenkins.pipeline.maven.step.MavenUpdateVersionStep
 import io.tardisoft.jenkins.pipeline.maven.step.QualityGateStep
 import io.tardisoft.jenkins.pipeline.maven.step.deploy.MavenDeployStep
 import io.tardisoft.jenkins.pipeline.maven.step.deploy.MavenGithubPagesDeployStep
-import io.tardisoft.jenkins.pipeline.maven.step.notify.AbstractNotifyExternalStep
+import io.tardisoft.jenkins.pipeline.notify.AbstractNotifyExternalStep
 import io.tardisoft.jenkins.pipeline.release.GitTagReleaseStrategy
 import io.tardisoft.jenkins.pipeline.step.Step
 

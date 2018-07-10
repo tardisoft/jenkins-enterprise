@@ -1,7 +1,8 @@
 #!/usr/bin/groovy
+import io.tardisoft.jenkins.pipeline.gradle.GradleJenkinsPipeline
 import io.tardisoft.jenkins.pipeline.maven.MavenJenkinsPipeline
 import io.tardisoft.jenkins.pipeline.maven.step.deploy.MavenGhPagesDeployStep
-import io.tardisoft.jenkins.pipeline.maven.step.notify.DatadogNotifyExternalStep
+import io.tardisoft.jenkins.pipeline.notify.DatadogNotifyExternalStep
 import io.tardisoft.jenkins.pipeline.release.GitTagReleaseStrategy
 
 /**
@@ -33,19 +34,30 @@ def call(body) {
     ]
     config.putAll(overrideConfig)
 
-    MavenJenkinsPipeline pipeline = new MavenJenkinsPipeline(runQualityGate: config.runQualityGate)
+    if (this.fileExists('pom.xml')) {
+        MavenJenkinsPipeline pipeline = new MavenJenkinsPipeline(runQualityGate: config.runQualityGate)
 
-    pipeline.run(this) {
-        pipeline.nodeLabel = config.node
-        pipeline.releaseBranches = (List<String>) (config.branchesToRelease instanceof Collection ? config.branchesToRelease : [config.branchesToRelease])
-        pipeline.gitCredentialsId = config.gitCredentialsId
-        pipeline.gitOauthCredentialsId = config.gitOauthCredentialsId
-        pipeline.updateVersionStep.updateStrategy = config.updateStrategy
-        pipeline.rootPom = config.rootPom
-        pipeline.parentPom = config.parentPom
-        pipeline.deploySite = config.deploySite
-        pipeline.deploySteps = [new MavenGhPagesDeployStep(generateMavenSite: config.generateMavenSite, generateJavadoc: config.generateJavadoc)]
-        pipeline.notifyExternalStep = [new DatadogNotifyExternalStep()]
+        pipeline.run(this) {
+            pipeline.nodeLabel = config.node
+            pipeline.releaseBranches = (List<String>) (config.branchesToRelease instanceof Collection ? config.branchesToRelease : [config.branchesToRelease])
+            pipeline.gitCredentialsId = config.gitCredentialsId
+            pipeline.gitOauthCredentialsId = config.gitOauthCredentialsId
+            pipeline.updateVersionStep.updateStrategy = config.updateStrategy
+            pipeline.rootPom = config.rootPom
+            pipeline.parentPom = config.parentPom
+            pipeline.deploySite = config.deploySite
+            pipeline.deploySteps = [new MavenGhPagesDeployStep(generateMavenSite: config.generateMavenSite, generateJavadoc: config.generateJavadoc)]
+            pipeline.notifyExternalStep = [new DatadogNotifyExternalStep()]
+        }
+    } else if (this.fileExists('build.gradle')) {
+        GradleJenkinsPipeline pipeline = new GradleJenkinsPipeline()
+        pipeline.run(this) {
+            pipeline.nodeLabel = config.node
+            pipeline.releaseBranches = (List<String>) (config.branchesToRelease instanceof Collection ? config.branchesToRelease : [config.branchesToRelease])
+            pipeline.gitCredentialsId = config.gitCredentialsId
+            pipeline.gitOauthCredentialsId = config.gitOauthCredentialsId
+            pipeline.notifyExternalStep = [new DatadogNotifyExternalStep()]
+        }
     }
 }
 

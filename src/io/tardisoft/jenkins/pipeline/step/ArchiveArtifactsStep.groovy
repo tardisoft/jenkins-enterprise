@@ -1,6 +1,4 @@
-package io.tardisoft.jenkins.pipeline.maven.step
-
-import io.tardisoft.jenkins.pipeline.step.Step
+package io.tardisoft.jenkins.pipeline.step
 
 /**
  * Archives build artifacts into Jenkins
@@ -14,7 +12,7 @@ class ArchiveArtifactsStep implements Serializable, Step {
     /**
      * Comma separated list of ant file path patterns to be archived
      */
-    String artifacts = '**/target/usage*.txt,**/target/japicc-compat-reports/compat_report.html'
+    String artifacts = '**/target/usage*.txt,**/target/japicc-compat-reports/compat_report.html,**/build/usage*.txt,**/build/japicc-compat-reports/compat_report.html'
     /**
      * Comma separated list of ant file path patterns to be excluded,  this is applied after the includes pattern.
      */

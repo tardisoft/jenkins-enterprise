@@ -1,12 +1,11 @@
-package io.tardisoft.jenkins.pipeline.maven.step.notify
+package io.tardisoft.jenkins.pipeline.notify
 
-import io.tardisoft.jenkins.pipeline.maven.step.MavenStep
 import io.tardisoft.jenkins.pipeline.step.Step
 
 /**
- * Step to deploy maven artifacts to artifactory
+ * Step to notify external
  */
-abstract class AbstractNotifyExternalStep extends MavenStep implements Serializable, Step {
+abstract class AbstractNotifyExternalStep implements Serializable, Step {
     /**
      * {@inheritDoc}
      */

@@ -1,4 +1,4 @@
-package io.tardisoft.jenkins.pipeline.maven.step.notify
+package io.tardisoft.jenkins.pipeline.notify
 
 import hudson.PluginManager
 import io.tardisoft.jenkins.pipeline.maven.MavenJenkinsPipeline
