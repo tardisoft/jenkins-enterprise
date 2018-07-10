@@ -235,6 +235,8 @@ buildApplication {
 
 This is the version strategy to use.  Currently the following are supported:
 
+===== GitTagReleaseStrategy
+
 *io.tardisoft.jenkins.pipeline.release.GitTagReleaseStrategy*
 
 This will use the version in your build config and remove the `-SNAPSHOT` if the current branch matches branchesToRelease above.
@@ -252,6 +254,8 @@ buildApplication {
 }
 ----
 
+===== SpringReleaseStrategy
+
 *io.tardisoft.jenkins.pipeline.release.SpringReleaseStrategy*
 
 This will use the version plus `.RELEASE` and remove the `-SNAPSHOT` if the current branch matches branchesToRelease above.
@@ -268,6 +272,8 @@ buildApplication {
 	updateStrategy = new SpringReleaseStrategy()
 }
 ----
+
+===== BasicReleaseStrategy
 
 *io.tardisoft.jenkins.pipeline.release.BasicReleaseStrategy*
 
