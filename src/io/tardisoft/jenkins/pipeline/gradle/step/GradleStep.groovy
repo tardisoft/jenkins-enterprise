@@ -88,18 +88,11 @@ abstract class GradleStep implements Serializable, Step {
      */
     void gradle(def script, List<String> args) {
         String gradle = 'gradle'
-        if (script.fileExists('gradlew')) {
-            gradle = './gradlew'
-        }
+//        if (script.fileExists('gradlew')) {
+//            gradle = './gradlew'
+//        }
 
         // GRADLE_OPTS holds arguments for the JVM
-        String gradleOptsValue = getGradleOpts()
-        String gradleOpts
-        if (gradleOptsValue) {
-            gradleOpts = "export GRADLE_OPTS=\"${gradleOptsValue}\" &&"
-        } else {
-            gradleOpts = ''
-        }
 
         String gradleArgStr = getGradleArgLine(args)
         List<String> fullCommandList = []
