@@ -25,7 +25,7 @@ class CheckstyleGoal implements Serializable, GradleBuildGoal {
     /**
      * Checkstyle plugin option see plugin documentation for details
      */
-    String pattern = '**/build/reports/checkstyle/*.xml'
+    String pattern = '**/build/reports/checkstyle/main.xml'
     /**
      * Checkstyle plugin option see plugin documentation for details
      */
