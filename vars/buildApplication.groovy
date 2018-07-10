@@ -34,7 +34,7 @@ def call(body) {
     ]
     config.putAll(overrideConfig)
 
-    if (this.fileExists('pom.xml')) {
+    if (fileExists('pom.xml')) {
         MavenJenkinsPipeline pipeline = new MavenJenkinsPipeline(runQualityGate: config.runQualityGate)
 
         pipeline.run(this) {
@@ -49,7 +49,7 @@ def call(body) {
             pipeline.deploySteps = [new MavenGhPagesDeployStep(generateMavenSite: config.generateMavenSite, generateJavadoc: config.generateJavadoc)]
             pipeline.notifyExternalStep = [new DatadogNotifyExternalStep()]
         }
-    } else if (this.fileExists('build.gradle')) {
+    } else if (fileExists('build.gradle')) {
         GradleJenkinsPipeline pipeline = new GradleJenkinsPipeline()
         pipeline.run(this) {
             pipeline.nodeLabel = config.node
