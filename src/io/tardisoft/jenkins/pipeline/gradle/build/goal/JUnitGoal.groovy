@@ -15,7 +15,7 @@ import io.tardisoft.jenkins.pipeline.gradle.step.GradleStep
  */
 class JUnitGoal implements Serializable, GradleBuildGoal {
     def testDataPublishers = [[$class: 'AttachmentPublisher']]
-    def testResults = '**/build/test-results/*.xml'
+    def testResults = '**/build/test-results/**/*.xml'
     def allowEmptyResult = true
     /**
      * Set to true to not fail on build on test failure.  This is useful if you would like the junit publisher to
